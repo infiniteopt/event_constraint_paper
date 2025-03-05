@@ -43,7 +43,6 @@ function solve_ode_system()
     return sol
 end
 sol = solve_ode_system()
-# println("Solution: ")
 tspan = (0, 200)
 tss = range(tspan[1], tspan[2], length=111)
 s_trajectory = [sol.u[i][1] for i in 1:length(sol.t)]
@@ -187,27 +186,18 @@ function big_M(α) #This is an exact formulation
 end
 function CVaR(α)  #This is a continuous approximation
     # The SigVaR paper describes this: https://arxiv.org/abs/2004.02402 (page 17)
-    # We use `λ` instead of `t` used in the paper to distinguish from the infinite parameter `t`
-    # Here `h` is the same thing as the `z` used their paper
-    # if α == 0.9
-    #     func = interpolate_data("hard")[2] # initialize the parameters with the solution of the hard constraint
-    # else
-    #     func = [0,0,0,0,0.5]
-    # end
-    # CVaR approximation is as follows:
     func = [0,0,0,0,0.5]
     # func = interpolate_data("hard")[2]
     model = base_model("Ipopt", func)
     @variable(model, λ ≥ 0) # the optimal value is needed for initializing the SigVaR approach
     @variable(model, ϕ ≥ 0, Infinite(model[:t]))
     @constraint(model, ϕ ≥ model[:h] - λ) 
-    @constraint(model, 𝔼(ϕ, model[:t]) ≤ -λ * (1 - α)) #Eq 2.11 in your paper #Eq 36d in his paper
+    @constraint(model, 𝔼(ϕ, model[:t]) ≤ -λ * (1 - α))
     execute_model(model)
     return model
 end
 function Create_SigVaR(μ, τ, α, func) # Enforce the continuous SigVaR approximation
     model = base_model("Ipopt", func)
-    # model = base_model("conopt4", func)
     @variable(model, ϕ ≥ 0, Infinite(model[:t]), start = func[6])
     @constraint(model, ϕ ≥ (2*(1 + μ)) / (μ + exp(-τ * model[:h])) - 1)
     @constraint(model, 𝔼(ϕ, model[:t]) ≤ 1 - α)
@@ -232,14 +222,10 @@ runtime_vals = Vector{Any}()
 
 function SigVaR_algorithm(α, num_iterations)
     # Described in https://arxiv.org/abs/2004.02402 (page 16)
-    # Formulation is equation 35
-    # Note that our version of α is 1-α in their paper
-    # Here `h` is the same thing as the `z` used their paper
     # interpolate:
     cvar = interpolate_data("CVaR", α)
     model = cvar[1] # initialize the parameters with the solution of the CVaR
     func = cvar[2]
-    # func = Func
     lastobj = objective_value(model)
     println("CVaR Objective = ", lastobj)
     λ_val = value(model[:λ])
@@ -277,9 +263,9 @@ function SigVaR_algorithm(α, num_iterations)
         push!(μ_vals, μ)
         push!(τ_vals, τ)
         push!(runtime_vals, JuMP.solve_time(SigVaR_model))
-        # if offset <= 0.001
-        #     break
-        # end
+        if offset <= 0.001
+            break
+        end
         s_interp = linear_interpolation(ts,s_vals[ł])
         s_start = ts -> s_interp(ts)
         e_interp = linear_interpolation(ts,e_vals[ł])
@@ -341,11 +327,8 @@ function plot_iterations(ts, i, u)
     plot!(ts, u, label = "Complimentarity", linecolor = :orange, linewidth = 4)
     ylims!(-0.04, 1)
 
-    # Combine the plots into a single layout
     plt=plot(p0, p1, layout = (2, 1), size=(800, 600), dpi = 400)
-    # Set font properties
     display(plt)
-    # # Apply font
 end
 comp_obj_vals = Vector{Any}()
 comp_status_vals = Vector{Any}()
@@ -367,7 +350,6 @@ function compliment_iterate(α)
     hard = interpolate_data("hard")
     initial_solution = hard[1]
     func = hard[2]
-    # func = Func
     
     last_feasible_model = initial_solution
     for ϵ in ϵs
@@ -402,7 +384,6 @@ function compliment_iterate(α)
         push!(comp_runtime_vals, solve_time(model))
         
         # plot_iterations(ts, initial_values_i, initial_values_u)
-
         println("epsilon = ", ϵ)
         println("------------------- Complimentarity Method -------------------")
     end
@@ -445,7 +426,6 @@ function master(α, method)
         #---------------- Hard Constraint Method -------------------#
         model = runmodel("Hard")
         ts = value(model[:t])
-        # println("ts", ts)
         s_opt = value(model[:s])
         e_opt = value(model[:e])
         i_opt = value(model[:i])
@@ -597,17 +577,18 @@ function master(α, method)
     end
     clear_global_vectors()
 end
-αs = [0.85, 0.9, 0.95, 0.96, 0.97, 0.99]
+αs = [0.85, 0.9, 0.95, 0.96, 0.97, 0.99] # Chosen α values
 
 for α in αs
     master(α, "Hard")
     master(α, "CVaR")
     master(α, "SigVaR")
-    master(α, "bigM")
     master(α, "complimentarity")
 end
 
-
+for α in αs # Run the bigM method seperately as it can take magnitudes longer to converge
+    master(α, "bigM")
+end
 
 
 

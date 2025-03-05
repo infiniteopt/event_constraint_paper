@@ -1,5 +1,5 @@
 # Event Constrained Programming
-# Infinite-Dimensional Optimization Case Studies
+## Infinite-Dimensional Optimization Case Studies
 This repository contains the source-code Julia scripts used in the case studies 
 featured in the manuscript "Event Constrained Programming" by Daniel Ovalle, Stefan Mazzadi, Carl D. Laird, Ignacio E. Grossmann, and Joshua L. Pulsipher.
 

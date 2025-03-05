@@ -146,7 +146,7 @@ function CVaR(α, linear)  #This is a continuous approximation
     @variable(model, λ ≥ 0) # the optimal value is needed for initializing the SigVaR approach
     @variable(model, ϕ ≥ 0, Infinite(model[:x]))
     @constraint(model, ϕ ≥ model[:h] - λ) 
-    @constraint(model, 𝔼(𝔼(ϕ, model[:x][1]),model[:x][2]) ≤ -λ * (1 - α)) #Eq 2.11 in your paper #Eq 36d in his paper
+    @constraint(model, 𝔼(𝔼(ϕ, model[:x][1]),model[:x][2]) ≤ -λ * (1 - α))
     execute_model(model)
     λ_val = value(model[:λ])
     Γ = -1/(λ_val - Tmax)
@@ -177,9 +177,6 @@ status_vals = Vector{Any}()
 runtime_vals = Vector{Any}() 
 function SigVaR_algorithm(α, num_iterations, linear)
     # Described in https://arxiv.org/abs/2004.02402 (page 16)
-    # Formulation is equation 35
-    # Note that our version of α is 1-α in their paper
-    # Here `h` is the same thing as the `z` used their paper
     cvar = interpolate_data(linear, "CVaR", α)
     model = cvar[1] # initialize the parameters with the solution of the CVaR
     func = cvar[2]    
@@ -216,7 +213,6 @@ function SigVaR_algorithm(α, num_iterations, linear)
         push!(μ_vals, μ)
         push!(τ_vals, τ)
         push!(runtime_vals, JuMP.solve_time(SigVaR_model))
-        # push!(num_iterations_vals, result_count(SigVaR_model, :iteration))
         
         if offset <= 0.003
             break
@@ -643,7 +639,7 @@ function master(α, method, linear)
     end
     clear_global_vectors()
 end
-αs = [0.9, 0.95, 0.96, 0.97, 0.99, 0.999]
+αs = [0.9, 0.95, 0.96, 0.97, 0.99, 0.999] # Chosen α values
 
 for α in αs
     #------------- Linear Solution --------------#
@@ -660,10 +656,6 @@ for α in αs
     master(α, "Hard", linear) # Hard Constraint Method
     master(α, "CVaR", linear) # CVaR Method
     master(α, "SigVaR", linear) # SigVaR Method
-    # master(α, "bigM_juniper", linear) # Big-M Method Juniper
-    # master(α, "bigM_dicopt", linear) # Big-M Method Dicopt
-    # master(α, "bigM_scip", linear) # Big-M Method SCIP
-    # master(α, "bigM_baron", linear) # Big-M Method Baron
     master(α, "complimentarity_ipopt", linear) # Complimentarity Method Ipopt
     master(α, "complimentarity_conopt4", linear) # Complimentarity Method Conopt4
 end

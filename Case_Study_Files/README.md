@@ -23,10 +23,8 @@ julia> ]
 
 (Pandemic_Control) pkg> instantiate
 
-julia> include("Pandemic_Control_Code_Final_GitHub.jl")
+julia> include("Pandemic_Control/Pandemic_Control_Code_Final_GitHub.jl")
 ```
-Note it will be slow the first time it is run as the packages are installed 
-and precompiled. However, subsequent runs should be relatively quick.
 
 ## Case Study 2: 2D Diffusion
 Here is the source code for the 2D diffusion case study that 
@@ -48,10 +46,8 @@ julia> ]
 
 (2D_Diffusion) pkg> instantiate
 
-julia> include("2D_Diffusion_Code_final_GitHub.jl")
+julia> include("2D_Diffusion/2D_Diffusion_Code_final_GitHub.jl")
 ```
-Note it will be slow the first time it is run as the packages are installed 
-and precompiled. However, subsequent runs should be relatively quick.
 
 ## Case Study 3: Power Grid
 Here is the source code for the power grid case study that 
@@ -73,7 +69,7 @@ julia> ]
 
 (Power_Grid) pkg> instantiate
 
-julia> include("ieee14_infiniteopt.jl")
+julia> include("Power_Grid/ieee14_infiniteopt.jl")
 ```
-Note it will be slow the first time it is run as the packages are installed 
-and precompiled. However, subsequent runs should be relatively quick.
+
+Note: All .json data files produced will be saved in each case study's respective "data_folder" folder.
