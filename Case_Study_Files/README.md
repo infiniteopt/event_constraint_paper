@@ -71,28 +71,4 @@ julia> ]
 
 julia> include("2D_Diffusion_Code_final_GitHub.jl")
 ```
-
-## Case Study 3: Power Grid
-Here is the source code for the power grid case study that 
-features different event constraints. The entirety 
-of this case study is self-contained in `Power_Grid/ieee14_infiniteopt.jl`. 
-
-![ieee14](figures/ieee14_diagram_label.PNG)
-
-### Running it
-To configure the required packages, we recommend creating a Julia environment 
-using the included `Project.toml` file. Thus, we can configure the environment and 
-run the case study via:
-```julia
-julia> cd("[INSERT_PATH_TO_FILES]/Power_Grid/")
-
-julia> ]
-
-(@v1.11) pkg> activate .
-
-(Power_Grid) pkg> instantiate
-
-julia> include("Power_Grid/ieee14_infiniteopt.jl")
-```
-
 Note: All .json data files produced will be saved in each case study's respective "data_folder" folder.
