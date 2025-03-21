@@ -8,7 +8,7 @@ Here is the source code for the power grid case study that
 features different event constraints. The entirety 
 of this case study is self-contained in `Power_Grid/ieee14_infiniteopt.jl`. 
 
-<img src="figures/ieee14_diagram_label.png" alt="ieee14" width="50%">
+<img src="figures/ieee14_diagram_label.PNG" alt="ieee14" width="50%">
 
 ### Running it
 To configure the required packages, we recommend creating a Julia environment 
