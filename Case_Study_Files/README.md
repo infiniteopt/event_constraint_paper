@@ -3,7 +3,7 @@ Here we provide the source code to the results presented in
 "Event Constrained Programming" by 
 Daniel Ovalle, Stefan Mazzadi, Carl D. Laird, Ignacio E. Grossmann, and Joshua L. Pulsipher. 
 
-To run the source code below, the master version of InfiniteOpt.jl is required and caan be installed as follows:
+To run the source code below, the master version of InfiniteOpt.jl is required and can be installed as follows:
 
 ```julia
 julia> import Pkg
