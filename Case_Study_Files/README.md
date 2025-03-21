@@ -3,6 +3,14 @@ Here we provide the source code to the results presented in
 "Event Constrained Programming" by 
 Daniel Ovalle, Stefan Mazzadi, Carl D. Laird, Ignacio E. Grossmann, and Joshua L. Pulsipher. 
 
+To run the source code below, the master version of InfiniteOpt.jl is required and caan be installed as follows:
+
+```julia
+julia> import Pkg
+
+julia> Pkg.add(url = "https://github.com/infiniteopt/InfiniteOpt.jl", rev = "master")
+```
+
 ## Case Study 1: Power Grid
 Here is the source code for the power grid case study that 
 features different event constraints. The entirety 
